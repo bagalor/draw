@@ -1,0 +1,32 @@
+!!!
+html
+	head
+		title= "Bagalor Chat"
+		script(src='/chat.js')
+		script(src='/draw.js')
+		script(src='/user.js')
+		script(src='/socket.io/socket.io.js')
+		script(src='http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js')
+
+
+	body
+		// Chat Box
+		#content(style='width: 500px; height: 300px; margin: 0 0 20px 0; border: solid 1px #999; overflow-y: scroll;')
+		// User List Box
+		#userListBox(style='width:175px; height: 300px; margin: 0 0 20px 20px; border: solid 1px #999; overflow-y:scroll; position: absolute; left: 530px; top: 10px;')
+	.controls
+		| Name:	
+		input#name(style='width:175px; maxlength:10')
+		br
+		input#field(style='width:350px;')
+		input#send(type='button', value='send')
+	canvas#myCanvas
+	br
+	canvas#palette
+	br
+	span#sizer
+		| Size:
+		input#slider(type="range", min="1", max="30", step="1", value="5") 
+		| Current:&nbsp;&nbsp;
+		canvas#canvasSize
+	input#clear(type='button', value='clear')
