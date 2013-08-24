@@ -1,8 +1,12 @@
 var express = require("express");
 var app = express();
 var port = process.env.PORT || 5000;
+// more sockets available
+var https = require('https');
+https.globalAgent.maxSockets = 1000;
 
-var Canvas = require('canvas');
+var masterImage;
+
 
 // Enable Jade use with ExpressJS
 app.set('views', __dirname + '/tpl');
@@ -21,10 +25,10 @@ var io = require('socket.io').listen(app.listen(port));
 
 
 // assuming io is the Socket.IO server object   *** For Heroku which doesnt support WS **
-io.configure(function () { 
+/*io.configure(function () { 
   io.set("transports", ["xhr-polling"]); 
   io.set("polling duration", 10); 
-});
+});*/
 // *************************
 
 // socket connection
@@ -63,6 +67,7 @@ io.sockets.on('connection', function (socket) {
     allSockets[userObj.key] = userObj;
     socket.emit('updateThisUser', {user: userObj.name, taken: 'n'});       // fill in 'name' form with guest num
     io.sockets.emit('showUsers', { ID: allSockets});
+    socket.emit('redraw',{img:masterImage});    // show current drawing board
     // finish init
     
     // message handler
@@ -108,6 +113,10 @@ io.sockets.on('connection', function (socket) {
     });
     socket.on('clear', function(data){
         io.sockets.emit('clearRe');
+    });
+    socket.on('resync',function(data){
+        masterImage = data.img;
+        //io.sockets.emit('redraw',{img:data.img});
     });
 });
 

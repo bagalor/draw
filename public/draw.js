@@ -83,6 +83,11 @@ function initDraw() {
             socket.emit('drawLine',{newX: e.clientX- justifyX, newY: e.clientY- justifyY,lastX: lastX, lastY: lastY,  lineWidth: lineWidth, color:color});
         }
     }, 0);
+    canvas.addEventListener('mouseup', function(e) {    // resync image in mouseup
+        var img = canvas.toDataURL();
+        socket.emit('resync',{img:img});
+        
+    }, 0);
     
     // Palette
     function initPalette(){
@@ -93,6 +98,7 @@ function initDraw() {
         }
         //"#C36241"   // light brown aka rust
         //"#33FFCC";    //teal
+        
     }
     palette.addEventListener('click', function(e) {
         event.preventDefault();
@@ -107,6 +113,7 @@ function initDraw() {
             }
         }
     }, 0);
+
     
     // Resizer
     $('#slider').bind('DOMAttrModified input change focus', function () {
@@ -163,6 +170,17 @@ function initDraw() {
         });
     socket.on('clearRe', function(data){
         canvasCtx.clearRect(0, 0, width, height);
+    });
+    
+    socket.on('redraw',function(data){
+        var newImg = new Image();
+        newImg.onload = function() {
+            canvasCtx.drawImage(newImg, 0, 0,width, height);
+        }
+        newImg.src = data.img;
+     
+        
+        
     });
     
 }
